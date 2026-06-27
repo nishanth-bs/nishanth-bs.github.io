@@ -1,271 +1,217 @@
-#progress-bar {
-    height: 4px;
-    background: #1e88e5;
-    width: 0%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-  }
-  /* Clean and scalable header padding */
-.site-header {
-    padding: 1rem 2rem;
-  }
-  
-  /* Optional: Improve spacing for logo + nav links */
-  .site-header .logo {
-    margin-right: 1rem;
-  }
-  
-  .nav {
-    gap: 1rem;
-  }
-  
-  /* Optional: Add a shadow and sticky header if desired */
-  .site-header {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 999;
-    background: var(--theme);
-  }
+/* ==========================================================================
+   Beyond Swift, custom theme on top of PaperMod.
+   Direction: Signal (light) + Ink (dark mode), from one token set.
+   See DESIGN.md for the full Design Language System. No em dashes anywhere.
+   ========================================================================== */
 
-  /* Adding different color
-  ---------------------------*/
-
-
-  /* Clay & Copper: Balanced Readability Version */
-
+/* ---- 1. Tokens -------------------------------------------------------- */
 :root {
-  --body-bg: #FDF9F3;
-  --text-color: #2C2118;
-  --primary: #C9714A;
-  --primary-contrast: #ffffff;
-  --link-color: #9F4A2E;
-  --pre-bg: #FAF4EE;
-  --blockquote-border: #C9714A;
+  --paper:     #f3f2ef;   /* page background */
+  --paper-2:   #ffffff;   /* cards, raised surfaces */
+  --ink:       #121215;   /* primary text */
+  --ink-2:     #56565d;   /* secondary text, meta */
+  --line:      rgba(18,18,21,.12);
+  --accent:    #ff4326;   /* the one bold note */
+  --accent-d:  #d8351b;
+  --ring:      rgba(255,67,38,.5);   /* live-dot pulse */
+  --invert-bg: #121215;   /* always-dark surfaces (featured art, manifesto) */
+  --invert-fg: #f3f2ef;
+
+  --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono:  ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --ease:  cubic-bezier(.2,.7,.2,1);
+  --ease-back: cubic-bezier(.2,.9,.3,1.2);
+
+  --maxw: 1180px;
 }
 
-body {
-  background-color: var(--body-bg);
-  color: var(--text-color);
-}
-
-a {
-  color: var(--link-color);
-}
-
-pre, code {
-  background-color: var(--pre-bg) !important;
-}
-
-blockquote {
-  border-left: 4px solid var(--blockquote-border);
-  background-color: #FFF2E3;
-  padding-left: 1rem;
-}
-
-/* Dark mode */
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --body-bg: #161311;
-    --text-color: #F1ECE7;
-    --primary: #C9714A;
-    --primary-contrast: #1E1B18;
-    --link-color: #FFA07A;
-    --pre-bg: #26221E;
-    --blockquote-border: #C9714A;
-  }
-
-  body {
-    background-color: var(--body-bg);
-    color: var(--text-color);
-  }
-
-  a {
-    color: var(--link-color);
-  }
-
-  pre, code {
-    background-color: var(--pre-bg) !important;
-  }
-
-  blockquote {
-    border-left: 4px solid var(--blockquote-border);
-    background-color: #1E1B18;
-    padding-left: 1rem;
-  }
-}
-
-/* Force background when class="dark" is applied by PaperMod */
+/* Dark (Ink) tokens. PaperMod is the single source of truth: it adds/removes
+   the `dark` class on <body> (key: pref-theme, plus system auto). We only need
+   to override the tokens under body.dark. Light is the :root default above. */
 body.dark {
-  background-color: #161311 !important;
-  color: #F1ECE7 !important;
+  --paper:    #121215;
+  --paper-2:  #1c1c21;
+  --ink:      #f3f2ef;
+  --ink-2:    #a1a1aa;
+  --line:     rgba(255,255,255,.13);
+  --accent:   #ff5a40;
+  --accent-d: #ff4326;
+  --ring:     rgba(255,90,64,.5);
+  --invert-bg:#0a0a0c;
+  --invert-fg:#f3f2ef;
 }
 
-body.dark a {
-  color: #FFA07A !important;
+/* ---- 2. Base --------------------------------------------------------- */
+html, body { overflow-x: hidden; }
+body {
+  background-color: var(--paper) !important;
+  color: var(--ink) !important;
+  font-family: var(--sans);
 }
+::selection { background: var(--accent); color: #fff; }
 
-body.dark pre,
-body.dark code {
-  background-color: #26221E !important;
-}
+.post-content a,
+.post-single a,
+.first-entry a { color: var(--accent); }
 
-body.dark blockquote {
-  background-color: #1E1B18 !important;
-  border-left: 4px solid #C9714A !important;
-}
+/* native cross-page crossfade (navigation only) */
+@view-transition { navigation: auto; }
 
-/* For the navbar cramped up position
------------------------------------- */
-nav.nav {
-  padding-top: 3rem;
-}
-
-
-.site-header {
-  position: static !important; /* or just remove 'position: sticky' */
-  box-shadow: none !important;
-}
-
-/* Base header */
+/* ---- 3. Header / nav (lowercase furniture) --------------------------- */
 header.header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: #fff; /* opaque background */
-  color: #1E1B18;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  will-change: transform;
+  position: sticky; top: 0; z-index: 1000;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+  transition: transform .3s ease, background-color .3s ease;
 }
+header.header.nav-hidden { transform: translateY(-100%); }
 
-/* Dark mode */
-body.dark header.header {
-  background-color: #161311;
-  color: #F1ECE7;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
+.nav { display: flex; align-items: center; gap: 1.25rem; padding: 0; }
 
-/* Hide on scroll down */
-header.header.nav-hidden {
-  transform: translateY(-100%);
+.logo a {
+  display: inline-flex; align-items: center;
+  font-weight: 800; letter-spacing: -.03em;
+  text-transform: lowercase;
+  color: var(--ink) !important;
 }
-
-.nav {
-  display: flex;
-  gap: 1.25rem;
-  font-size: 0.95rem;
-}
-
-.nav a {
-  text-decoration: none;
-  position: relative;
-  color: var(--link-color);
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 0%;
-  background: var(--link-color);
-  transition: width 0.3s ease, height 0s ease;
-}
-
-.nav a:hover::after,
-.nav a.active::after {
-  width: 100%;
-}
-.nav a.active {
-  color: var(--primary);
-}
-
-.nav a span.active {
-  position: relative;
-  display: inline-block;
-}
-
-.nav a span.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 0.4px;
-  background: var(--link-color);
-  transition: width 0.3s ease, height 0.3s ease;
-}
-
-img[src*="nishanth2x"] {
-  width: 40%;
-  min-width: 96px;
-  border-radius: 50%;
-  margin-bottom: 1rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .logo a::before {
-  content: "";
-  display: inline-block;
-  vertical-align: middle;
-  width: 48px;
-  height: 48px;
-  margin-right: 0.5rem;
-  background-image: url("/images/nishanth0.5x.png");
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
+  content: ""; display: inline-block; width: 22px; height: 22px;
+  margin-right: .55rem; border-radius: 6px;
+  background: var(--accent);
+  background-image: none;
 }
 
-/* default (light mode) */
-.coming-soon-img {
-  display: block;
-  margin: 2rem auto;
-  max-width: 100%;
-  border-radius: 8px;
+#menu { gap: 1.4rem; overflow: visible; flex-wrap: wrap; }
+#menu a, #menu li a {
+  text-transform: lowercase;
+  color: var(--ink-2);
+  font-weight: 500;
+  position: relative;
+  transition: color .18s;
 }
+#menu a::after {
+  content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0;
+  background: var(--accent); transition: width .28s var(--ease);
+}
+#menu a:hover { color: var(--ink); }
+#menu a:hover::after { width: 100%; }
+#menu .active { color: var(--ink); }
+#menu .active::after { width: 100%; }
 
-/* dark mode override */
-@media (prefers-color-scheme: dark) {
-  .coming-soon-img {
-    content: url("/images/comingsoon-dark.png");
+/* ---- 4. Shared button ------------------------------------------------ */
+.bs-btn {
+  display: inline-block; padding: 13px 22px; border-radius: 12px;
+  font-weight: 650; font-size: 15px; cursor: pointer; white-space: nowrap;
+  transition: transform .18s var(--ease), background .2s, color .2s;
+}
+.bs-solid { background: var(--accent); color: #fff !important; }
+.bs-solid:hover { background: var(--accent-d); transform: translateY(-2px); }
+.bs-line { border: 1.5px solid var(--ink); color: var(--ink) !important; }
+.bs-line:hover { background: var(--ink); color: var(--paper) !important; transform: translateY(-2px); }
+
+/* ---- 5. Homepage (full-bleed out of PaperMod's narrow container) ------ */
+.bs-home {
+  width: min(var(--maxw), 94vw);
+  margin-inline: auto;
+  position: relative; left: 50%; transform: translateX(-50%);
+  text-align: left;
+}
+.bs-home a { text-decoration: none; color: inherit; }
+/* Explicit heading colors so PaperMod's .post-content styles cannot override them.
+   Light surfaces use --ink; the always-dark blocks use --invert-fg. */
+.bs-home h1, .bs-home h2, .bs-home h3 { color: var(--ink); }
+.bs-home .manifesto h2 { color: var(--invert-fg); }
+.bs-home .art, .bs-home .art .tagline { color: var(--invert-fg); }
+
+.bs-home .hero { padding: 8px 0 52px; border-bottom: 1px solid var(--line); }
+.bs-home .eyebrow {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ink-2); display: flex; align-items: center; gap: 12px; margin: 0 0 24px;
+}
+.bs-home .live {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 0 0 var(--ring); flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bs-home .live { animation: bs-ping 2.4s ease-out infinite; }
+  @keyframes bs-ping {
+    0%   { box-shadow: 0 0 0 0 var(--ring); }
+    70%  { box-shadow: 0 0 0 9px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
   }
 }
+.bs-home h1.title {
+  font-size: clamp(46px, 8.5vw, 120px); line-height: 1.0; letter-spacing: -.045em;
+  font-weight: 850; margin: 0; text-wrap: balance;
+}
+.bs-home h1.title .em { color: var(--accent); }
+.bs-home .hero-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-top: 36px; flex-wrap: wrap; }
+.bs-home .lead { max-width: 46ch; font-size: 18px; color: var(--ink-2); margin: 0; line-height: 1.55; }
+.bs-home .lead strong { color: var(--ink); font-weight: 600; }
+.bs-home .cta { display: flex; gap: 12px; flex-shrink: 0; }
 
-html[data-theme="dark"] {
-  background-color: #000; /* or your dark bg */
-  color: #fff;
+.bs-home .pillars { display: grid; grid-template-columns: repeat(3,1fr); border-bottom: 1px solid var(--line); }
+.bs-home .pillar { padding: 28px 0; border-right: 1px solid var(--line); padding-right: 24px; transition: transform .3s var(--ease); }
+.bs-home .pillar:last-child { border-right: none; padding-right: 0; }
+.bs-home .pillar:hover { transform: translateY(-3px); }
+.bs-home .k { font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.bs-home .pillar h3 { font-size: 22px; letter-spacing: -.02em; margin: 11px 0 6px; font-weight: 750; }
+.bs-home .pillar p { font-size: 14px; color: var(--ink-2); margin: 0; }
+
+.bs-home .section-label { display: flex; align-items: baseline; gap: 14px; margin: 54px 0 22px; }
+.bs-home .section-label h2 { font-size: 15px; font-family: var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 0; font-weight: 600; }
+.bs-home .section-label .rule { flex: 1; height: 1px; background: var(--line); }
+.bs-home .section-label .count { font-family: var(--mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+.bs-home .featured { display: grid; grid-template-columns: 1.15fr .85fr; border: 1px solid var(--ink); border-radius: 18px; overflow: hidden; background: var(--paper-2); transition: transform .35s var(--ease), box-shadow .35s var(--ease); }
+.bs-home .featured:hover { transform: translateY(-3px); box-shadow: 0 24px 56px rgba(0,0,0,.13); }
+.bs-home .featured .fbody { padding: 36px; display: flex; flex-direction: column; }
+.bs-home .cat { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.bs-home .featured h3 { font-size: clamp(26px, 3.2vw, 38px); line-height: 1.05; letter-spacing: -.03em; margin: 14px 0 12px; font-weight: 800; }
+.bs-home .featured p { color: var(--ink-2); font-size: 16px; margin: 0 0 22px; max-width: 44ch; }
+.bs-home .meta { margin-top: auto; font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.bs-home .art { background: var(--invert-bg); color: var(--invert-fg); padding: 36px; display: flex; align-items: flex-end; position: relative; overflow: hidden; }
+.bs-home .art .tagline { position: absolute; top: 32px; left: 36px; right: 36px; font-family: var(--mono); font-size: 13px; color: rgba(255,255,255,.6); }
+.bs-home .art .big { font-size: clamp(72px, 12vw, 180px); font-weight: 850; letter-spacing: -.06em; line-height: .8; color: var(--accent); }
+
+.bs-home .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-top: 16px; }
+.bs-home .card { background: var(--paper-2); border: 1px solid var(--line); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; min-height: 200px; transition: transform .28s var(--ease), border-color .28s, box-shadow .28s; }
+.bs-home .card:hover { transform: translateY(-5px); border-color: var(--ink); box-shadow: 0 16px 36px rgba(0,0,0,.09); }
+.bs-home .card h3 { font-size: 20px; line-height: 1.18; letter-spacing: -.015em; margin: 13px 0 0; font-weight: 700; }
+.bs-home .card .meta { padding-top: 16px; }
+.bs-home .card.more { background: transparent; border-style: dashed; align-items: center; justify-content: center; color: var(--ink-2); font-weight: 600; min-height: 200px; }
+.bs-home .card.more:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-5px); }
+.bs-home .card.more .arrow { display: inline-block; transition: transform .25s var(--ease); }
+.bs-home .card.more:hover .arrow { transform: translateX(6px); }
+
+.bs-home .manifesto { margin: 60px 0 8px; border-radius: 22px; background: var(--invert-bg); color: var(--invert-fg); padding: 52px 44px; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; position: relative; overflow: hidden; }
+.bs-home .manifesto::after { content: ""; position: absolute; right: -60px; top: -60px; width: 240px; height: 240px; background: var(--accent); border-radius: 50%; filter: blur(12px); opacity: .85; }
+.bs-home .manifesto .ct { position: relative; z-index: 2; }
+.bs-home .manifesto .k { color: var(--accent); }
+.bs-home .manifesto h2 { font-size: clamp(26px, 3.6vw, 42px); letter-spacing: -.03em; margin: 12px 0 10px; font-weight: 800; max-width: 18ch; }
+.bs-home .manifesto p { color: rgba(255,255,255,.72); margin: 0; max-width: 42ch; font-size: 16px; }
+.bs-home .manifesto .bs-btn { position: relative; z-index: 2; }
+
+/* ---- 6. Motion: gentle scroll reveal only ---------------------------- */
+.io { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.io.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .io { opacity: 1 !important; transform: none !important; }
 }
 
-html[data-theme="dark"] .post-title {
-  color: #fff;
+/* ---- 7. Responsive --------------------------------------------------- */
+@media (max-width: 820px) {
+  .bs-home .featured { grid-template-columns: 1fr; }
+  .bs-home .art { min-height: 200px; }
+  .bs-home .pillars { grid-template-columns: 1fr; }
+  .bs-home .pillar { border-right: none; border-bottom: 1px solid var(--line); padding-right: 0; }
+  .bs-home .grid { grid-template-columns: 1fr; }
 }
 
-.view-count {
-  font-size: 0.9rem;
-  color: gray;
-  margin-left: 0.5rem;
-}
-.user-count-wrapper {
-  display: block !important;
-  width: 100% !important;
-  margin-top: 0.4rem;
-  font-size: 0.9rem;
-  color: gray;
-  clear: both;
-}
-.user-count-number {
-  font-weight: 600;
-}
+/* ---- 8. Preserved: usercount (from original) ------------------------- */
+.view-count { font-size: 0.9rem; color: gray; margin-left: 0.5rem; }
+.user-count-wrapper { display: block !important; width: 100% !important; margin-top: 0.4rem; font-size: 0.9rem; color: var(--ink-2); clear: both; }
+.user-count-number { font-weight: 600; }
