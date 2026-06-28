@@ -75,13 +75,15 @@ header.header.nav-hidden { transform: translateY(-100%); }
   text-transform: lowercase;
   color: var(--ink) !important;
 }
-/* Inline SVG logo (mark + two-tone wordmark) from params.label.iconSVG.
-   Colored here with tokens so it flips light/dark. */
-.logo a svg.bs-mark { height: 23px; width: auto; overflow: visible; display: block; }
+/* Ascending-bars mark + two-tone real-text wordmark (markup in header.html).
+   Mark colored with tokens so it flips light/dark. */
+.logo a { gap: .5rem; }
+/* reset PaperMod's .logo a svg rule (translate(0,-10%), border-radius, margin) */
+.logo a svg.bs-mark { height: 21px; width: auto; display: block; overflow: visible; flex: 0 0 auto; transform: none; border-radius: 0; margin: 0; vertical-align: middle; }
 .logo a svg.bs-mark .ink { fill: var(--ink); }
 .logo a svg.bs-mark .acc { fill: var(--accent); }
-.logo a svg.bs-mark .dim { fill: var(--ink); opacity: .5; }
-.logo a svg.bs-mark .wm  { font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: -.6px; }
+.logo a .bs-wm .b1 { opacity: .5; }   /* "beyond" dimmed */
+.logo a .bs-wm .b2 { color: var(--ink); }  /* "swift" full */
 
 #menu { gap: 1.4rem; overflow: visible; flex-wrap: wrap; }
 #menu a, #menu li a {
