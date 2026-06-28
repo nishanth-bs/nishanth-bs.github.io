@@ -75,12 +75,13 @@ header.header.nav-hidden { transform: translateY(-100%); }
   text-transform: lowercase;
   color: var(--ink) !important;
 }
-.logo a::before {
-  content: ""; display: inline-block; width: 22px; height: 22px;
-  margin-right: .55rem; border-radius: 6px;
-  background: var(--accent);
-  background-image: none;
-}
+/* Inline SVG logo (mark + two-tone wordmark) from params.label.iconSVG.
+   Colored here with tokens so it flips light/dark. */
+.logo a svg.bs-mark { height: 23px; width: auto; overflow: visible; display: block; }
+.logo a svg.bs-mark .ink { fill: var(--ink); }
+.logo a svg.bs-mark .acc { fill: var(--accent); }
+.logo a svg.bs-mark .dim { fill: var(--ink); opacity: .5; }
+.logo a svg.bs-mark .wm  { font-family: var(--sans); font-weight: 800; font-size: 20px; letter-spacing: -.6px; }
 
 #menu { gap: 1.4rem; overflow: visible; flex-wrap: wrap; }
 #menu a, #menu li a {
@@ -192,6 +193,22 @@ header.header.nav-hidden { transform: translateY(-100%); }
 .bs-home .manifesto h2 { font-size: clamp(26px, 3.6vw, 42px); letter-spacing: -.03em; margin: 12px 0 10px; font-weight: 800; max-width: 18ch; }
 .bs-home .manifesto p { color: rgba(255,255,255,.72); margin: 0; max-width: 42ch; font-size: 16px; }
 .bs-home .manifesto .bs-btn { position: relative; z-index: 2; }
+
+/* ---- 5b. Author credits (about page, blends into the page) ----------- */
+/* Selectors scoped under .post-content to beat PaperMod's content rules
+   (img border-radius, a box-shadow underline). No dark box: sits open on
+   the page, separated only by a hairline, like the home section labels. */
+.post-content .bs-credits { margin: 40px 0 8px; padding-top: 28px; border-top: 1px solid var(--line); }
+.post-content .bs-credits .k { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 26px; }
+.post-content .bs-credits .people { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 32px; }
+.post-content .bs-credits .p { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.post-content .bs-credits .p > img { width: 78px; height: 78px; border-radius: 999px; object-fit: cover; border: 1px solid var(--line); flex: 0 0 auto; margin: 0; }
+.post-content .bs-credits .nm { font-size: 20px; font-weight: 750; letter-spacing: -.015em; line-height: 1.1; color: var(--ink); }
+.post-content .bs-credits .role { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 6px 0 9px; font-weight: 500; }
+.post-content .bs-credits a.li { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-decoration: none; box-shadow: none; transition: color .2s var(--ease); }
+.post-content .bs-credits a.li:hover { color: var(--accent); }
+.post-content .bs-credits a.li svg { width: 14px; height: 14px; min-width: 14px; fill: currentColor; flex: 0 0 auto; }
+@media (max-width: 560px) { .post-content .bs-credits .people { grid-template-columns: 1fr; gap: 22px; } }
 
 /* ---- 6. Motion: gentle scroll reveal only ---------------------------- */
 .io { opacity: 0; transform: translateY(20px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
