@@ -311,8 +311,9 @@ header.header.nav-hidden { transform: translateY(-100%); }
    the reading column centred at every width below the 1000px rail threshold. */
 @media (max-width: 999px) {
   .post-single .toc {
-    position: sticky; top: 56px; z-index: 20; margin: 0 0 26px;
+    position: sticky; top: var(--toc-top, 56px); z-index: 20; margin: 0 0 26px;
     background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    transition: top .3s ease;  /* slide in sync with the app bar */
   }
   .post-single .toc summary {
     display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 13px 16px;
@@ -323,6 +324,22 @@ header.header.nav-hidden { transform: translateY(-100%); }
   .post-single .toc .toc-readout { display: none; }
 }
 
+/* Narrow screens: drop the floating card and blend the drawer into the app bar —
+   full-bleed bar, no side/top borders, same paper as the header. */
+@media (max-width: 999px) {
+  .post-single .toc {
+    margin: 0 calc(50% - 50vw) 26px;
+    width: 100vw; max-width: none;
+    border-radius: 0; border-left: 0; border-right: 0; border-top: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .post-single .toc summary { padding-left: var(--gap); padding-right: var(--gap); }
+  .post-single .toc[open] .inner, .post-single .toc details[open] .inner {
+    padding-left: var(--gap); padding-right: var(--gap);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #reading-progress i { transition: none; }
+  .post-single .toc { transition: none; }
 }

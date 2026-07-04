@@ -47,9 +47,24 @@
     }
 
     // start the drawer collapsed when it's in drawer mode (it renders open by default)
-    if (window.matchMedia('(max-width: 999px)').matches) {
-      var details = toc.querySelector('details');
-      if (details) details.removeAttribute('open');
+    var drawer = window.matchMedia('(max-width: 999px)');
+    var details = toc.querySelector('details');
+    if (drawer.matches && details) details.removeAttribute('open');
+
+    // in drawer mode, collapse the TOC as soon as a section is chosen
+    if (details) {
+      toc.addEventListener('click', function (e) {
+        if (drawer.matches && e.target.closest('a[href^="#"]')) {
+          details.removeAttribute('open');
+        }
+      });
+
+      // crossing the rail<->drawer threshold: desktop rail must stay open,
+      // otherwise a collapsed drawer state hides the whole TOC on resize up.
+      drawer.addEventListener('change', function (e) {
+        if (e.matches) details.removeAttribute('open');
+        else details.setAttribute('open', '');
+      });
     }
   }
 
