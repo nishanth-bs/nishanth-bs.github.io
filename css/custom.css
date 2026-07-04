@@ -42,7 +42,10 @@ body.dark {
 }
 
 /* ---- 2. Base --------------------------------------------------------- */
-html, body { overflow-x: hidden; }
+/* `clip` (not `hidden`) still clips horizontal bleed but does NOT create a
+   scroll container, so position: sticky descendants (the post reading rail)
+   stick to the viewport. `hidden` would silently break them. */
+html, body { overflow-x: clip; }
 body {
   background-color: var(--paper) !important;
   color: var(--ink) !important;
@@ -234,3 +237,92 @@ header.header.nav-hidden { transform: translateY(-100%); }
 .view-count { font-size: 0.9rem; color: gray; margin-left: 0.5rem; }
 .user-count-wrapper { display: block !important; width: 100% !important; margin-top: 0.4rem; font-size: 0.9rem; color: var(--ink-2); clear: both; }
 .user-count-number { font-weight: 600; }
+
+/* ==========================================================================
+   9. Post reading rail (direction B). CSS-only, no layout override.
+   Rides on PaperMod's built-in TOC (<div class="toc"><details><summary>...
+   <div class="inner"><ul>). Desktop: a sticky left rail beside the reading
+   column. Mobile: the same <details> collapses into a Contents drawer.
+   Progress bar + active-section highlight come from static/js/reading.js.
+   ========================================================================== */
+
+/* Reading progress bar: fixed hairline at the very top, above the sticky nav. */
+#reading-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: transparent; z-index: 1002; pointer-events: none; }
+#reading-progress i { display: block; height: 100%; width: 0; background: var(--accent); }
+
+/* Anchor jumps clear the sticky header. */
+.post-content h1, .post-content h2, .post-content h3, .post-content h4 { scroll-margin-top: 84px; }
+
+/* Strip PaperMod's boxed TOC chrome; we restyle from scratch. */
+.post-single .toc { background: transparent; border: 0; box-shadow: none; padding: 0; margin: 0; border-radius: 0; }
+.post-single .toc details { border: 0; }
+.post-single .toc .inner { margin: 0; padding: 0; overflow: visible; }
+.post-single .toc summary { list-style: none; }
+.post-single .toc summary::-webkit-details-marker,
+.post-single .toc summary::marker { display: none; }
+.post-single .toc summary .details {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2);
+}
+
+/* TOC links: numbered top level, accent active state, hairline guide. */
+.post-single .toc ul { list-style: none; margin: 0; padding: 0; }
+.post-single .toc .inner > ul { counter-reset: toc; display: flex; flex-direction: column; gap: 1px; }
+.post-single .toc li { margin: 0; }
+.post-single .toc a {
+  display: flex; gap: 10px; align-items: baseline; font-size: 13.5px; line-height: 1.35;
+  color: var(--ink-2); text-decoration: none; box-shadow: none !important;
+  border-left: 2px solid var(--line); padding: 7px 0 7px 13px;
+  transition: color .18s var(--ease), border-color .18s var(--ease);
+}
+.post-single .toc .inner > ul > li > a::before {
+  counter-increment: toc; content: counter(toc, decimal-leading-zero);
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink-2); flex: none;
+}
+.post-single .toc a:hover { color: var(--ink); }
+.post-single .toc a.toc-active { color: var(--ink); border-color: var(--accent); font-weight: 600; }
+.post-single .toc a.toc-active::before { color: var(--accent); }
+.post-single .toc ul ul a { padding-left: 24px; font-size: 12.5px; }   /* nested (h3+): indent, no number */
+
+/* Read-% readout injected at the foot of the rail (desktop only). */
+.post-single .toc .toc-readout { font-family: var(--mono); font-size: 11px; color: var(--ink-2); margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line); }
+.post-single .toc .toc-readout b { color: var(--accent); font-variant-numeric: tabular-nums; }
+.post-single .toc .toc-sum-pct { display: none; }
+
+/* Desktop (wide): symmetric 3-column grid. The reading column is the CENTRE
+   track with an equal empty spacer on the right, so it stays dead-centre in
+   the viewport; the rail lives in the left track and is sticky (pinned while
+   you scroll, released at the footer). Needs gutter room, so it engages above
+   1000px; narrower screens use the drawer below. */
+@media (min-width: 1000px) {
+  main.main:has(.post-single) { max-width: 1140px; }
+  .post-single {
+    display: grid; grid-template-columns: 190px minmax(0, 700px) 190px;
+    column-gap: 30px; justify-content: center; align-items: start;
+  }
+  .post-single > * { grid-column: 2; min-width: 0; }         /* header, content, footer: centre column */
+  .post-single > .toc {
+    grid-column: 1; position: sticky; top: 96px; align-self: start;
+    max-height: calc(100vh - 120px); overflow-y: auto;
+  }
+  .post-single .toc summary { pointer-events: none; cursor: default; margin-bottom: 16px; }  /* stays open, non-collapsible */
+}
+
+/* Mobile / narrow desktop: rail folds into a sticky Contents drawer, keeping
+   the reading column centred at every width below the 1000px rail threshold. */
+@media (max-width: 999px) {
+  .post-single .toc {
+    position: sticky; top: 56px; z-index: 20; margin: 0 0 26px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+  }
+  .post-single .toc summary {
+    display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 13px 16px;
+  }
+  .post-single .toc summary .details::before { content: "\2261"; color: var(--accent); margin-right: 8px; }  /* ≡ */
+  .post-single .toc .toc-sum-pct { display: inline; margin-left: auto; font-family: var(--mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .post-single .toc[open] .inner, .post-single .toc details[open] .inner { padding: 4px 10px 12px; border-top: 1px solid var(--line); }
+  .post-single .toc .toc-readout { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #reading-progress i { transition: none; }
+}
