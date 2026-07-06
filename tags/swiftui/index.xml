@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>SwiftUI on Beyond Swift</title><link>https://beyondswift.com/tags/swiftui/</link><description>Recent content in SwiftUI on Beyond Swift</description><generator>Hugo -- 0.163.3</generator><language>en-us</language><lastBuildDate>Mon, 06 Jul 2026 23:35:00 +0530</lastBuildDate><atom:link href="https://beyondswift.com/tags/swiftui/index.xml" rel="self" type="application/rss+xml"/><item><title>Why your SwiftUI view model keeps resetting</title><link>https://beyondswift.com/mvvm-in-swiftui-with-a-tiny-screen/</link><pubDate>Mon, 06 Jul 2026 23:35:00 +0530</pubDate><guid>https://beyondswift.com/mvvm-in-swiftui-with-a-tiny-screen/</guid><description>&lt;p&gt;Here is a view model that fetches a list of jokes. It compiles, it passes review, and it ships in a lot of apps.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-swift" data-lang="swift"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;final&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;class&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;JokeViewModel&lt;/span&gt;: ObservableObject {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; @Published &lt;span style="color:#66d9ef"&gt;var&lt;/span&gt; jokes: [Joke] = []
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;private&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;var&lt;/span&gt; cancellables = Set&amp;lt;AnyCancellable&amp;gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;func&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;fetch&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; JokeService.fetchJokes()
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; .sink(receiveCompletion: { &lt;span style="color:#66d9ef"&gt;_&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;in&lt;/span&gt; }, receiveValue: { [&lt;span style="color:#66d9ef"&gt;weak&lt;/span&gt; &lt;span style="color:#66d9ef"&gt;self&lt;/span&gt;] &lt;span style="color:#66d9ef"&gt;in&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;self&lt;/span&gt;?.jokes = $0
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; })
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; .store(&lt;span style="color:#66d9ef"&gt;in&lt;/span&gt;: &amp;amp;cancellables)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;struct&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;JokeList&lt;/span&gt;: View {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; @ObservedObject &lt;span style="color:#66d9ef"&gt;var&lt;/span&gt; viewModel = JokeViewModel() &lt;span style="color:#75715e"&gt;// note this line&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;var&lt;/span&gt; body: some View {
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; List(viewModel.jokes) { Text($0.text) }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; .onAppear { viewModel.fetch() }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now put &lt;code&gt;JokeList&lt;/code&gt; inside a parent that has a search field, and type one character.&lt;/p&gt;</description></item></channel></rss>
